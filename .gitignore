@@ -1,0 +1,5 @@
+# 個人や会社の文脈はリポジトリに入れない (public)
+CLAUDE.local.md
+.claude/settings.local.json
+.env
+.env.*
