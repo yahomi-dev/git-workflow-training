@@ -1,0 +1,48 @@
+# NPC イベント (a): 受講者が quest/NN-* を push したら、用意したパッチを main に積んで衝突させる。
+# 設計: docs/design.md 6 節。データ: npc/quests/NN/conflict.patch
+name: npc-conflict
+
+on:
+  push:
+    branches:
+      - "quest/**"
+
+permissions: {}
+
+concurrency:
+  group: npc-conflict
+  cancel-in-progress: false
+
+jobs:
+  conflict:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 演習番号を取る
+        id: quest
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          nn="${BRANCH#quest/}"
+          nn="${nn%%-*}"
+          echo "nn=${nn}" >> "$GITHUB_OUTPUT"
+
+      - name: NPC のトークン
+        id: npc
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.NPC_APP_ID }}
+          private-key: ${{ secrets.NPC_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ steps.npc.outputs.token }}
+
+      - name: パッチを main に積む
+        env:
+          NN: ${{ steps.quest.outputs.nn }}
+          GH_TOKEN: ${{ steps.npc.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+          NPC_SLUG: ${{ steps.npc.outputs.app-slug }}
+        run: scripts/npc/conflict.sh "$NN"

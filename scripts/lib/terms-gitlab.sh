@@ -1,0 +1,25 @@
+# GitLab 向けの用語。exercises/*.md の {{name}} を TERM_name で置換する (scripts/render.sh)。
+# GitLab 版の自動化 (CI の check、NPC) は未実装 (docs/design.md 15 節)。用語の描画だけ対応する。
+# 変数は render.sh が間接参照で読むので、shellcheck の未使用警告は抑制する。
+# shellcheck disable=SC2034
+TERM_platform="GitLab"
+TERM_pr="MR"
+TERM_pr_long="Merge Request (MR)"
+TERM_cli="glab"
+TERM_ci="CI/CD (Pipelines)"
+TERM_ci_tab="Pipelines タブ"
+TERM_protected="protected branch (保護された main)"
+TERM_squash_merge="Squash commits をオンにしてマージ"
+TERM_rebase_merge="Fast-forward merge (プロジェクト設定の Merge method)"
+TERM_merge_commit="Merge commit (プロジェクト設定の Merge method)"
+TERM_request_changes="Request changes (Free ではマージを止めないので、未解決スレッドも残す)"
+TERM_approve="Approve"
+TERM_resolve="Resolve thread"
+TERM_rerequest="レビュアーに再確認を依頼するコメント"
+TERM_pr_create="glab mr create --web (無ければ push 後に表示される URL を開く)"
+TERM_pr_view="glab mr view --web"
+TERM_pr_checkout="glab mr checkout"
+TERM_revert_button="マージ済み MR のページの Revert ボタン"
+TERM_release="Release (Deployments > Releases、または glab release create)"
+TERM_platform_doc="docs/platform/gitlab.md"
+TERM_push_rejected="pre-receive hook declined (protected branch による拒否)"

@@ -1,0 +1,59 @@
+diff --git a/.vscode/settings.json b/.vscode/settings.json
+new file mode 100644
+index 0000000..24dec22
+--- /dev/null
++++ b/.vscode/settings.json
+@@ -0,0 +1,4 @@
++{
++  "editor.fontSize": 16,
++  "files.autoSave": "afterDelay"
++}
+diff --git a/site/config.sample.js b/site/config.sample.js
+new file mode 100644
+index 0000000..0b5872e
+--- /dev/null
++++ b/site/config.sample.js
+@@ -0,0 +1,4 @@
++// お知らせを外部のカレンダーから取る予定の設定 (サンプル)
++// 本物のキー。共有しないこと
++const NEWS_API_KEY = "hb-7f3a9c2e4d1b8a6f5e0c9d2b4a7f1e3c";
++const NEWS_API_URL = "https://example.com/hidamari/news";
+diff --git a/site/index.html b/site/index.html
+index 32810a1..b64e2d8 100644
+--- a/site/index.html
++++ b/site/index.html
+@@ -49,6 +49,12 @@
+         <ul class="news-list">
+           <li>春の読書週間がはじまります。期間中は貸出冊数が 2 冊増えます。</li>
+           <li>新着本の棚を入口のそばに移しました。</li>
++          <li class="news-item-featured">
++            <img src="img/logo.svg" alt="" width="24" height="24">
++            <h3>読書会のご案内</h3>
++            来月の第 2 土曜に読書会を開きます。開舘時間内ならだれでも参加できます。
++          </li>
++          <!-- お知らせは最新 2 件だけ表示する。古いものは消す -->
+         </ul>
+       </section>
+ 
+diff --git a/site/style.css b/site/style.css
+index e9b688e..deb2885 100644
+--- a/site/style.css
++++ b/site/style.css
+@@ -66,6 +66,17 @@ h2 {
+   padding-inline-start: 1.5rem;
+ }
+ 
++/* お知らせ欄の高さを揃える (/home/taro/work/hidamari/notes.txt のメモ参照) */
++.news-list {
++  height: 120px;
++}
++
++.news-item-featurd {
++  padding: 0.5rem;
++  background: #fff3d6;
++  list-style: none;
++}
++
+ .site-footer {
+   margin-top: 3rem;
+   padding-top: 1rem;

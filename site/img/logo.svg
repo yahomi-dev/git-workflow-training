@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" role="img" aria-label="ひだまり図書室のロゴ">
+  <circle cx="24" cy="24" r="14" fill="#f0c060"/>
+  <g stroke="#f0c060" stroke-width="3" stroke-linecap="round">
+    <line x1="24" y1="2" x2="24" y2="7"/>
+    <line x1="24" y1="41" x2="24" y2="46"/>
+    <line x1="2" y1="24" x2="7" y2="24"/>
+    <line x1="41" y1="24" x2="46" y2="24"/>
+  </g>
+  <rect x="17" y="19" width="14" height="10" rx="1" fill="#fffaf0"/>
+  <line x1="24" y1="19" x2="24" y2="29" stroke="#f0c060" stroke-width="1.5"/>
+</svg>

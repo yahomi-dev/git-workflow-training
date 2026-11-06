@@ -1,0 +1,13 @@
+diff --git a/site/index.html b/site/index.html
+index 32810a1..2f0bde0 100644
+--- a/site/index.html
++++ b/site/index.html
+@@ -34,7 +34,7 @@
+             </tr>
+             <tr>
+               <td>土曜</td>
+-              <td>10:00〜17:00</td>
++              <td>10:00〜16:00 (12 月〜2 月)</td>
+             </tr>
+             <tr>
+               <td>日曜・祝日</td>

@@ -1,0 +1,46 @@
+# 進行ボード (pin した Issue) を自動更新する。NPC の 3 イベントとは別の、見せるための仕組み。
+# 設計: docs/design.md 16 節。本体: scripts/board.sh
+name: board
+
+on:
+  push:
+    branches: ["**"]
+    tags: ["**"]
+  create:
+  delete:
+  pull_request:
+    types: [opened, closed, reopened, ready_for_review, converted_to_draft]
+  issues:
+    types: [opened, closed, reopened]
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: board
+  cancel-in-progress: true
+
+jobs:
+  board:
+    runs-on: ubuntu-latest
+    steps:
+      - name: NPC のトークン
+        id: npc
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.NPC_APP_ID }}
+          private-key: ${{ secrets.NPC_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: すべての枝とタグを取る
+        run: git fetch --prune --tags origin '+refs/heads/*:refs/remotes/origin/*'
+
+      - name: ボードを更新する
+        env:
+          GH_TOKEN: ${{ steps.npc.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+        run: scripts/board.sh update

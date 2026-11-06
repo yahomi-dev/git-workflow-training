@@ -1,0 +1,43 @@
+# NPC イベント (b): 受講者の PR が開いたら、確認依頼型のレビューコメントを付ける。
+# 設計: docs/design.md 6 節。データ: npc/quests/NN/review/*.md
+name: npc-review
+
+on:
+  pull_request:
+    types: [opened]
+
+permissions: {}
+
+jobs:
+  review:
+    if: startsWith(github.head_ref, 'quest/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: 演習番号を取る
+        id: quest
+        env:
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          nn="${BRANCH#quest/}"
+          nn="${nn%%-*}"
+          echo "nn=${nn}" >> "$GITHUB_OUTPUT"
+
+      - name: NPC のトークン
+        id: npc
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.NPC_APP_ID }}
+          private-key: ${{ secrets.NPC_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: コメントを付ける
+        env:
+          NN: ${{ steps.quest.outputs.nn }}
+          PR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          GH_TOKEN: ${{ steps.npc.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+        run: scripts/npc/review.sh "$NN" "$PR" "$SHA"

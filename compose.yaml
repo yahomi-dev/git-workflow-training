@@ -1,0 +1,9 @@
+# サイドクエスト (演習 11): 用意された compose を動かすだけ。
+# docker compose up -> http://localhost:8080 に砂場のサイトが出る。Ctrl+C で止める。
+services:
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./site:/usr/share/nginx/html:ro

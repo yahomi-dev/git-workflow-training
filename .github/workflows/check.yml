@@ -1,0 +1,25 @@
+name: check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: HTML の構文
+        run: npx --yes html-validate@9 "site/**/*.html"
+
+      - name: 禁止文字列
+        run: scripts/check-forbidden.sh --all

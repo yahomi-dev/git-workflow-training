@@ -1,0 +1,39 @@
+# NPC イベント (c): 欠陥を仕込んだ PR を開き、受講者にレビューさせる。進行役が Actions タブから手で起動する。
+# 設計: docs/design.md 6 節。データ: npc/quests/NN/pr.patch ほか
+name: npc-pr
+
+on:
+  workflow_dispatch:
+    inputs:
+      quest:
+        description: "演習番号 (2 桁)"
+        required: true
+        default: "08"
+
+permissions: {}
+
+jobs:
+  pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: NPC のトークン
+        id: npc
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.NPC_APP_ID }}
+          private-key: ${{ secrets.NPC_APP_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ steps.npc.outputs.token }}
+
+      - name: PR を開く
+        env:
+          NN: ${{ inputs.quest }}
+          GH_TOKEN: ${{ steps.npc.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+          NPC_SLUG: ${{ steps.npc.outputs.app-slug }}
+          TRAINEE_LOGIN: ${{ vars.TRAINEE_LOGIN }}
+        run: scripts/npc/pr.sh "$NN"
