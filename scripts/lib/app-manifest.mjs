@@ -120,6 +120,16 @@ const server = http.createServer(async (request, response) => {
   response.end();
 });
 
+server.on("error", (error) => {
+  if (error.code === "EADDRINUSE") {
+    console.error(`app-manifest: ポート ${port} は使用中です。bootstrap は空きポートを自動で選びます (--port で指定もできます)`);
+  } else {
+    console.error(`app-manifest: ${error.message}`);
+  }
+
+  process.exit(1);
+});
+
 server.listen(port, "127.0.0.1", () => {
   process.stderr.write(`app-manifest: http://127.0.0.1:${port}/ を待っています\n`);
 });

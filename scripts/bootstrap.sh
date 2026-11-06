@@ -7,7 +7,7 @@
 #   --app-name  App の名前。GitHub 全体で一意 (既定: <自分>-hidamari-colleague)
 #   --trainee   受講者のログイン名 (後からでもよい。setup.sh か gh variable set で)
 #   --new-app   保存済みの App があっても作り直す
-#   --port      受け口のポート (既定 8787)
+#   --port      受け口のポート (既定: 空いているポートを自動で選ぶ)
 #
 # App は進行役のアカウントに 1 つあればよく、~/.config/git-workflow-training/ に保存して次のリポジトリでも再利用する。
 # 前提: gh auth login 済み (scope に workflow)、node 18 以上、jq、作業ツリーが clean で 1 つ以上コミットがある。
@@ -21,7 +21,7 @@ repo=""
 app_name=""
 trainee=""
 new_app=0
-port=8787
+port=""
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -53,10 +53,14 @@ open_url() {
   echo "ブラウザで開く: ${url}"
 }
 
+pick_free_port() {
+  node -e 'const s = require("node:net").createServer(); s.listen(0, "127.0.0.1", () => { process.stdout.write(String(s.address().port)); s.close(); });'
+}
+
 cd "$(kit_root)"
 
 echo "== 0. 前提"
-for c in gh node jq; do
+for c in gh node jq curl; do
   command -v "$c" > /dev/null 2>&1 || die "${c} が見つかりません"
 done
 gh auth status > /dev/null 2>&1 || die "gh auth login を先に行ってください"
@@ -114,13 +118,39 @@ else
     default_permissions: { contents: "write", pull_requests: "write", issues: "write", metadata: "read" }
   }' > "$manifest"
 
+  [ -n "$port" ] || port="$(pick_free_port)"
+  node_err="$(mktemp)"
+  trap 'rm -f "$manifest" "$result" "$node_err"' EXIT
+
   echo "App 名: ${app_name}"
-  echo "ブラウザが開いたら Create GitHub App を押してください (1 クリック目)"
-  GH_TOKEN="$(gh auth token)" node "${here}/lib/app-manifest.mjs" --manifest "$manifest" --port "$port" > "$result" &
+  GH_TOKEN="$(gh auth token)" node "${here}/lib/app-manifest.mjs" --manifest "$manifest" --port "$port" > "$result" 2> "$node_err" &
   node_pid=$!
-  sleep 1
+
+  # 受け口が立つまで待つ (立たなければブラウザを開かずに止める)
+  ready=0
+  for _ in $(seq 1 20); do
+    kill -0 "$node_pid" 2> /dev/null || break
+
+    if curl -s -o /dev/null "http://127.0.0.1:${port}/"; then
+      ready=1
+      break
+    fi
+
+    sleep 0.3
+  done
+
+  if [ "$ready" -ne 1 ]; then
+    cat "$node_err" >&2
+    die "受け口 (127.0.0.1:${port}) が起動しませんでした。--port <別の番号> で再実行してください"
+  fi
+
+  echo "ブラウザが開いたら Create GitHub App を押してください (1 クリック目)"
   open_url "http://127.0.0.1:${port}/"
-  wait "$node_pid" || die "App の作成が完了しませんでした"
+
+  if ! wait "$node_pid"; then
+    cat "$node_err" >&2
+    die "App の作成が完了しませんでした。GitHub 側に App が出来てしまっていたら消してから再実行 (--new-app)"
+  fi
 
   NPC_APP_ID="$(jq -r .id "$result")"
   NPC_APP_SLUG="$(jq -r .slug "$result")"
