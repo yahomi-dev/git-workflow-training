@@ -95,7 +95,7 @@ HTML と CSS だけ。ビルド無し。ブラウザで `index.html` を開け�
 
 ### 仕込んである不具合 (演習 10 の hotfix 用)
 
-フッタの「アクセス」リンクが存在しないページ `access.html` を指している。初日から main にあるが、クリックしない限り気づかない。演習 10 の Issue で初めて報告する。リセットで `site/` を baseline に戻すと不具合も戻る。
+フッタの「アクセス」リンクが存在しないページ `access.html` を指している。初日から main にあるが、クリックしない限り気づかない。演習 10 のクエストで初めて報告する。リセットで `site/` を baseline に戻すと不具合も戻る。
 
 ### CI (`check`)
 
@@ -379,7 +379,7 @@ App は進行役のアカウントに 1 つで、`~/.config/git-workflow-trainin
 | `exercises/` 12 本 | 作成済み。Issue 依存を外してゲーム画面向けに書き換え済み。描画は `scripts/web-check.mjs` と `scripts/render.sh` で確認 |
 | NPC: パッチ 3 本、レビューコメント 3 本、答え、workflow 3 本、scripts/npc | 作成済み。パッチは `git apply --check` を通した。workflow は公開後の煙テスト (setup.md 6 節) で動作を見る |
 | `scripts/` (render、setup、reset) | 作成済み。shellcheck を通した。setup / reset は公開で実際に使った (Issue 関連は撤去済み) |
-| `scripts/playtest.sh` (GitHub なしの自動テストプレイ) | 作成済み。模擬 origin に pre-receive hook で main を保護し、受講者役が演習 03〜10 の Issue のコマンドを順に打つ。NPC は本物の conflict.sh。通し結果: 衝突 2 回、rebase 解消、squash、force-with-lease、Rebase and merge の SHA 変化、revert、hotfix とタグ、NPC パッチの最終状態での適用、すべて OK (2026-11-06) |
+| `scripts/playtest.sh` (GitHub なしの自動テストプレイ) | 作成済み。模擬 origin に pre-receive hook で main を保護し、受講者役が演習 03〜10 のクエスト本文のコマンドを順に打つ。NPC は本物の conflict.sh。通し結果: 衝突 2 回、rebase 解消、squash、force-with-lease、Rebase and merge の SHA 変化、revert、hotfix とタグ、NPC パッチの最終状態での適用、すべて OK (2026-11-06) |
 | `scripts/bootstrap.sh` + `scripts/lib/app-manifest.mjs` + `app-jwt.mjs` (公開の一括化) | 公開で実際に使った。固定ポート、manifest の hook_attributes、install 検知の API を直して通った |
 | ゲーム画面 (`web/`、`pages.yml`。16 節) | 作成済み。ロジックは `scripts/web-check.mjs` で本物のリポジトリに対して確認。Pages の配信はマージ後に初めて動く |
 | 公開 | 2026-11-06 に public で公開済み。App install、secret、ruleset、baseline タグ、煙テスト (check / npc-review / npc-conflict) まで確認 |

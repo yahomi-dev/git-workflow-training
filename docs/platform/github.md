@@ -10,7 +10,7 @@
 2. メールの非公開: Settings > Emails で "Keep my email addresses private" と "Block command line pushes that expose my email" の両方にチェック
    - 確かめ方: チェックの下に `<ID>+<ログイン名>@users.noreply.github.com` が表示される。これが git の `user.email` に入れる noreply アドレス ([wsl2-setup.md](../wsl2-setup.md) 5 節)
 3. 招待の受諾: 進行役からの collaborator 招待を、メールまたは `https://github.com/<owner>/<repo>/invitations` から Accept
-   - 確かめ方: リポジトリの Issue を開くと、右側の Assignees に自分を選べる
+   - 確かめ方: 招待メールの Accept invitation を押した後、リポジトリのページを開くと Settings 以外のタブが見える。push できるかは演習 03 で確かめる
 
 ## PR を作る (演習 03 から)
 
