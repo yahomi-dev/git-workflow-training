@@ -25,7 +25,7 @@
 
 確かめ方: `gh pr status` の `Current branch` に `#<番号>` 付きで PR が出る。
 
-テンプレート (`.github/PULL_REQUEST_TEMPLATE.md`) の 5 項目 (意図 / 変更内容 / 影響範囲 / 確認方法 / 相談したいこと) と `Closes #<Issue 番号>` を埋める。
+テンプレート (`.github/PULL_REQUEST_TEMPLATE.md`) の 5 項目 (意図 / 変更内容 / 影響範囲 / 確認方法 / 相談したいこと) と、先頭行の `クエスト: quest-NN` を埋める。
 現場では本文に `Closes #NN` と書くとマージ時に Issue が閉じる (この研修では Issue を使わないので書かない)。
 
 ## レビューを受ける / する (演習 04、05、08)
