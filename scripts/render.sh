@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
-# 演習ファイル (exercises/*.md) をプラットフォーム向けに描画して標準出力に出す。
+# 演習ファイル (exercises/*.md) をプラットフォーム向けに描画して標準出力に出す (手元での確認用。
+# ゲーム画面 web/lib/quests.mjs も同じ規則で描画する)。
 #
-#   - {{name}} を scripts/lib/terms-<platform>.sh の TERM_name で置き換える
+#   - {{name}} を web/terms/<platform>.json の値で置き換える
 #   - <!-- platform:github --> ... <!-- /platform --> のブロックは、指定プラットフォームのものだけ残す
-#   - --section issue|notes で、<!-- issue:start --> .. <!-- issue:end --> (または notes) の中だけを出す
-#   - --base-url <URL> で、docs/ などへの相対リンクを絶対 URL にする (Issue 本文用)
+#   - --section quest|notes で、<!-- quest:start --> .. <!-- quest:end --> (または notes) の中だけを出す (旧名 issue も可)
+#   - --base-url <URL> で、docs/ などへの相対リンクを絶対 URL にする
 #
-# 使い方: scripts/render.sh [--platform github|gitlab] [--section issue|notes] [--base-url URL] <file>
+# 使い方: scripts/render.sh [--platform github|gitlab] [--section quest|notes] [--base-url URL] <file>
 # 置換されずに残った {{...}} があれば、警告を出して終了コード 1 にする。
 set -euo pipefail
 
@@ -32,18 +33,26 @@ done
 file="${1:?描画するファイルが必要}"
 [ -n "$platform" ] || platform="$(kit_platform)"
 kit_require_platform "$platform"
-# shellcheck source=scripts/lib/terms-github.sh
-source "${here}/lib/terms-${platform}.sh"
+terms_file="$(kit_root)/web/terms/${platform}.json"
+[ -f "$terms_file" ] || { echo "render: ${terms_file} がありません" >&2; exit 1; }
+
+# 旧名 issue は quest として扱う
+[ "$section" != "issue" ] || section="quest"
+alias_section=""
+[ "$section" != "quest" ] || alias_section="issue"
 
 tmp="$(mktemp)"
 trap 'rm -f "$tmp"' EXIT
 
 # 1. セクションの切り出しとプラットフォーム別ブロックの選別
-awk -v platform="$platform" -v section="$section" '
+awk -v platform="$platform" -v section="$section" -v alias_section="$alias_section" '
   BEGIN { keep = 1; inside = (section == "") }
+  function is_marker(line, name, kind) {
+    return name != "" && index(line, "<!-- " name ":" kind " -->") > 0
+  }
   {
-    if (section != "" && index($0, "<!-- " section ":start -->") > 0) { inside = 1; next }
-    if (section != "" && index($0, "<!-- " section ":end -->") > 0) { inside = 0; next }
+    if (is_marker($0, section, "start") || is_marker($0, alias_section, "start")) { inside = 1; next }
+    if (is_marker($0, section, "end") || is_marker($0, alias_section, "end")) { inside = 0; next }
     if (!inside) next
     if ($0 ~ /^<!-- platform:[a-z]+ -->[ \t]*$/) {
       p = $0
@@ -58,12 +67,10 @@ awk -v platform="$platform" -v section="$section" '
 ' "$file" > "$tmp"
 
 # 2. 用語の置換 (値の区切り文字と特殊文字をエスケープする)
-for var in "${!TERM_@}"; do
-  name="${var#TERM_}"
-  value="${!var}"
+while IFS=$'\t' read -r name value; do
   escaped="$(printf '%s' "$value" | sed -e 's/[\\|&]/\\&/g')"
   sed -i "s|{{${name}}}|${escaped}|g" "$tmp"
-done
+done < <(jq -r 'to_entries[] | "\(.key)\t\(.value)"' "$terms_file")
 
 # 3. 相対リンクを絶対 URL にする (exercises/ からの ../docs/... と、ルートからの docs/... の両方)
 if [ -n "$base_url" ]; then

@@ -26,7 +26,7 @@
 確かめ方: `gh pr status` の `Current branch` に `#<番号>` 付きで PR が出る。
 
 テンプレート (`.github/PULL_REQUEST_TEMPLATE.md`) の 5 項目 (意図 / 変更内容 / 影響範囲 / 確認方法 / 相談したいこと) と `Closes #<Issue 番号>` を埋める。
-`Closes` を書くと、マージ時に Issue が自動で閉じる。
+現場では本文に `Closes #NN` と書くとマージ時に Issue が閉じる (この研修では Issue を使わないので書かない)。
 
 ## レビューを受ける / する (演習 04、05、08)
 
@@ -99,5 +99,5 @@ main は ruleset で守られている。直接 push するとこう拒否され
 | `gh pr view --web` | 今のブランチの PR をブラウザで開く |
 | `gh pr checkout <番号>` | 他人の PR のブランチをローカルに持ってくる (演習 08 で NPC の PR を見るとき) |
 | `gh pr checks` | 今の PR の CI の結果 |
-| `gh issue list` | 開いている Issue の一覧 (`--label quest` で演習だけ) |
+| `gh issue list` | 開いている Issue の一覧 (現場で Issue を使うとき) |
 | `gh repo view --web` | リポジトリをブラウザで開く |

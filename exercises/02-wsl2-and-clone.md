@@ -4,7 +4,7 @@ week: 1
 -->
 # quest-02: WSL2 を入れて clone する
 
-<!-- issue:start -->
+<!-- quest:start -->
 ## 状況
 
 作業環境を作ります。この演習は **対面 1** で進行役と一緒に進めます (1 時間)。
@@ -17,7 +17,7 @@ week: 1
 
 ## 完了条件
 
-Ubuntu のターミナルで次を打って、結果を確かめる。
+Ubuntu のターミナルで次を打って、結果を確かめる。すべて満たしたら、ゲーム画面のこの演習の完了条件にチェックを付ける。この演習は {{pr}} が無いので、チェックが全部付くと済になる。
 
 - [ ] PowerShell で `wsl -l -v` を打つと、Ubuntu の VERSION が `2`
 - [ ] `which git` が `/usr/bin/git` (Windows 側の git ではない)
@@ -26,12 +26,12 @@ Ubuntu のターミナルで次を打って、結果を確かめる。
 - [ ] リポジトリが `~/src/` の下にある (`pwd` が `/home/` で始まる。`/mnt/c` ではない)
 - [ ] `git log --oneline | head -3` でコミットが 3 行出る
 - [ ] VS Code でリポジトリを開くと、左下に `WSL: Ubuntu` と出る
-- [ ] この Issue に `git log --oneline | head -3` の出力を貼った
+- [ ] ゲーム画面の 02 のメモに `git log --oneline | head -3` の出力を貼った
 
 ## 詰まったら
 
 [WSL2 の 1 枚](../docs/wsl2-setup.md) の末尾「つまずき」を見る。対面中なら進行役にその場で聞く。
-<!-- issue:end -->
+<!-- quest:end -->
 
 <!-- notes:start -->
 ## 進行役メモ
@@ -44,5 +44,5 @@ Ubuntu のターミナルで次を打って、結果を確かめる。
   - Windows 側の Git が先に見つかる (`which git` が `/mnt/c/...`)。Ubuntu 側で `sudo apt install git`
   - 資格情報の混線。`git config --global --list | grep credential` に Windows 側のパスがあれば `--unset-all credential.helper` してから `gh auth setup-git`
   - `git config` の `user.email` に通常のメールを入れてしまう。noreply に直す
-- 到達チェック **W-1 / W-2 / W-3 / W-4**
+- 到達チェック **W-1 / W-2 / W-3 / W-4**。ゲーム画面で済になったら進行役は手元の記録に達成日を書く
 <!-- notes:end -->

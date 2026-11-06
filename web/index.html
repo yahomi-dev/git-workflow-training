@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ひだまり図書室 クエスト</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="app.mjs"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <h1 class="site-title">ひだまり図書室 クエスト</h1>
+      <p class="progress-summary" id="progress-summary">読み込み中</p>
+      <div class="header-actions">
+        <button type="button" id="refresh-button">更新</button>
+        <button type="button" id="restart-button" class="button-quiet">はじめから</button>
+        <a id="repo-link" href="#" target="_blank" rel="noopener">リポジトリ</a>
+      </div>
+    </header>
+
+    <section class="start-screen" id="start-screen" hidden>
+      <div class="start-card">
+        <h2>ようこそ</h2>
+        <p>チーム開発の流れを、架空の図書室のサイトを直しながら身につけるクエストです。操作はターミナルと GitHub で行い、この画面は進み具合と枝の形を見るためのものです。</p>
+        <div class="start-actions">
+          <button type="button" id="start-new">はじめから</button>
+          <button type="button" id="start-continue" hidden>続きから</button>
+        </div>
+        <p class="start-note" id="start-note"></p>
+      </div>
+    </section>
+
+    <main class="game" id="game" hidden>
+      <aside class="side">
+        <section class="panel">
+          <h2 class="panel-title">クエスト</h2>
+          <ol class="quest-list" id="quest-list"></ol>
+        </section>
+        <section class="panel">
+          <h2 class="panel-title">NPC の動き</h2>
+          <ul class="activity-list" id="activity-list"></ul>
+        </section>
+        <section class="panel">
+          <h2 class="panel-title">開いている PR</h2>
+          <ul class="pr-list" id="pr-list"></ul>
+        </section>
+      </aside>
+
+      <section class="stage">
+        <article class="panel quest-panel">
+          <header class="quest-header">
+            <p class="quest-week" id="quest-week"></p>
+            <h2 class="quest-title" id="quest-title"></h2>
+            <p class="quest-status" id="quest-status"></p>
+          </header>
+          <div class="quest-body" id="quest-body"></div>
+          <details class="quest-notes">
+            <summary>進行役メモ (受講者は開かなくてよい)</summary>
+            <div class="quest-notes-body" id="quest-notes"></div>
+          </details>
+          <section class="memo">
+            <label for="memo-field">メモ (このブラウザに保存される。コマンドの出力や自分の言葉を書く)</label>
+            <textarea id="memo-field" rows="6"></textarea>
+          </section>
+          <nav class="quest-nav">
+            <button type="button" id="prev-quest" class="button-quiet">前のクエスト</button>
+            <button type="button" id="next-quest" class="button-quiet">次のクエスト</button>
+          </nav>
+        </article>
+
+        <section class="panel tree-panel">
+          <h2 class="panel-title">ブランチの木</h2>
+          <p class="tree-help">右端の強調された丸が今の main。横に出ている線がまだマージされていない枝。タグ (v1.0.0 など) はその時点の main に付けた名前。</p>
+          <div class="tree" id="tree"></div>
+          <p class="tree-foot" id="tree-foot"></p>
+        </section>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p id="rate-note"></p>
+      <p><small>ひだまり図書室は架空の施設です。<a href="https://github.com/yahomi-dev/git-workflow-training" id="footer-repo-link" target="_blank" rel="noopener">git-workflow-training</a></small></p>
+    </footer>
+  </body>
+</html>

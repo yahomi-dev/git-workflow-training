@@ -1,0 +1,23 @@
+{
+  "platform": "GitLab",
+  "pr": "MR",
+  "pr_long": "Merge Request (MR)",
+  "cli": "glab",
+  "ci": "CI/CD (Pipelines)",
+  "ci_tab": "Pipelines タブ",
+  "protected": "protected branch (保護された main)",
+  "squash_merge": "Squash commits をオンにしてマージ",
+  "rebase_merge": "Fast-forward merge (プロジェクト設定の Merge method)",
+  "merge_commit": "Merge commit (プロジェクト設定の Merge method)",
+  "request_changes": "Request changes (Free ではマージを止めないので、未解決スレッドも残す)",
+  "approve": "Approve",
+  "resolve": "Resolve thread",
+  "rerequest": "レビュアーに再確認を依頼するコメント",
+  "pr_create": "glab mr create --web (無ければ push 後に表示される URL を開く)",
+  "pr_view": "glab mr view --web",
+  "pr_checkout": "glab mr checkout",
+  "revert_button": "マージ済み MR のページの Revert ボタン",
+  "release": "Release (Deployments > Releases、または glab release create)",
+  "platform_doc": "docs/platform/gitlab.md",
+  "push_rejected": "pre-receive hook declined (protected branch による拒否)"
+}

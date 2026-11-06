@@ -108,7 +108,7 @@ VS Code のターミナル (Ctrl+`) は Ubuntu のシェルになっている。
 
     git config --global alias.tree "log --graph --oneline --decorate --all -20"
 
-確かめ方: `git tree` でコミットの木が出る。GitHub 側の全体は Issues に pin された「進行ボード」で見る。
+確かめ方: `git tree` でコミットの木が出る。GitHub 側の全体 (main と、まだマージされていない枝) はゲーム画面で見る。
 
 ## 8. リポジトリを clone する
 

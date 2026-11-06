@@ -6,11 +6,12 @@
 
 ## 1. 前提 (決定済み、この文書では再検討しない)
 
-- 舞台は **GitHub**。PR、Actions、Issues、`gh` CLI を使う
+- 舞台は **GitHub**。PR、Actions、Pages、`gh` CLI を使う
 - 教えるのは **Git と WSL2**。Docker は「用意された compose を動かす」サイドクエストに留める
-- Web UI は作らない。受講者 1 人に対してチームがいるように見せる役は、GitHub の中の **NPC** (自動化された同僚役) が担う。自動化は 3 イベントまでで増やさない
+- 受講者 1 人に対してチームがいるように見せる役は、GitHub の中の **NPC** (自動化された同僚役) が担う。自動化は 3 イベントまでで増やさない
+- 進め方の UI は **Web のゲーム画面** (GitHub Pages の静的サイト、見る専用。16 節)。操作そのもの (git、PR、レビュー) はターミナルと GitHub で行う。**Issue は使わない** (2026-11-06 変更。元は「Web UI は作らない」「Issue 1 件 = 演習 1 本」だったが、Issue の運用は案件で変わる比率が大きく、Git の使い方に焦点を当てるため)
 - 砂場は **小さな静的サイト 1 つ**。学ぶ対象は流れであってアプリではない
-- 演習は **Issue 1 件 = 1 本**、10〜12 本
+- 演習は 12 本 (砂場 11 + 実タスク 1)。受講者はゲーム画面で読む
 - マージ方式は **Squash and merge を既定** にし、4 つの動詞 (squash まとめる / rebase 載せ替える / ff 印を進めるだけ / merge commit 合流点を作る) で違いを教える
 - ブランチ運用は **GitHub Flow** (topic -> PR -> main)。git-flow は名前と「現場で使われていたら聞く」だけ
 - レビューは組織のレビュー観点集 (ID 付き) で返す。public 側に置くのは **ID と一般的な言い換えだけ**
@@ -28,22 +29,22 @@
 
 ## 3. 演習一覧と順序
 
-受講者はブランチを `quest/NN-<slug>` で切り、PR タイトルを `quest-NN: <動詞で始まる要約>` にする。
-Issue の番号は演習番号と一致しない (再利用で増える) ので、演習は常に `quest-NN` で呼ぶ。
+受講者はゲーム画面でクエストを読み、ブランチを `quest/NN-<slug>` で切り、PR タイトルを `quest-NN: <動詞で終わる要約>`、PR 本文の先頭を `クエスト: quest-NN` にする。
+進捗はゲーム画面が GitHub の状態から判定する: `quest/NN-*` の PR がマージされれば NN が済、`hotfix/*` のマージとタグ v1.0.0 / v1.0.1 で 10 が済、NPC の PR に人が Request changes を出せば 08 が済。PR の無い 01 / 02 / 11 / 12 は、完了条件のチェックを全部付けると済 (ブラウザに保存)。
 
 | # | 演習 | 完了条件 (受講者が 1 人で) | 想定 | NPC | 形式 | 週 |
 |---|---|---|---|---|---|---|
 | 01 | GitHub アカウントと 2FA | 2FA 有効。メール非公開 (noreply) と「メールが露出する push をブロック」が ON。collaborator 招待を受諾。public で名前と commit が見えることを了承 | 1h | - | 非同期 | W1 |
 | 02 | WSL2 と clone | Ubuntu 上で `git config` 3 点、`gh auth login`、VS Code の WSL 接続、`~/src/` 配下へ clone、`git log --oneline` が見える | 2h | - | 対面 1 | W1 |
-| 03 | 最初の commit と push | main へ直接 push して拒否される体験 -> `quest/03-*` に載せ替えて push。拒否された理由を Issue に 1 行で書く。短い PR を出し、approve 後に Squash and merge で入れる | 1h | - | 非同期 | W1 |
-| 04 | ブランチと PR | Issue の変更を PR に。5 項目テンプレ。CI 緑。NPC のコメント (b) に「直した / 直さない理由 / 質問」で返して resolve。進行役の approve 後に Squash and merge | 1.5h | (b) | 非同期 | W1 |
+| 03 | 最初の commit と push | main へ直接 push して拒否される体験 -> `quest/03-*` に載せ替えて push。拒否された理由を PR 本文に 1 行で書く。短い PR を出し、approve 後に Squash and merge で入れる | 1h | - | 非同期 | W1 |
+| 04 | ブランチと PR | クエストの依頼を PR に。5 項目テンプレ。CI 緑。NPC のコメント (b) に「直した / 直さない理由 / 質問」で返して resolve。進行役の approve 後に Squash and merge | 1.5h | (b) | 非同期 | W1 |
 | 05 | 差し戻しへの対応 | 進行役が Request changes (手動、進行役メモの台本)。修正を push、返答、再依頼、approve、マージ | 1h | - | 非同期 | W2 |
 | 06 | 衝突解消 | push 後に NPC が main を進める (a)。`git merge origin/main` で衝突を解消、両方の意図を残す。CI 緑、マージ | 1.5h | (a) | 対面 2 | W2 |
 | 07 | rebase と squash と 4 つの動詞 | 3 コミットに刻み、(a) の衝突を `git rebase origin/main` で解消 (自分の側を採る)。`reset --soft` で 1 コミットに squash、ff 可能を `merge-base --is-ancestor` で確認、`--force-with-lease`。PR 本文に 4 つの動詞。Rebase and merge で取り込み、SHA が変わるのを見る | 2h | (a) | 非同期 | W2 |
 | 08 | 他人の PR をレビュー | NPC の PR (c) を観点 ID + 温度感でレビューし Request changes。見逃し表を進行役と作る | 1.5h | (c) | 対面 3 | W3 |
 | 09 | revert | 演習 07 で入れた変更を `git revert` で打ち消す PR。Revert ボタンは場所を見るだけ | 1h | - | 非同期 | W3 |
 | 10 | hotfix とタグ | `v1.0.0` を打つ -> 仕込まれた不具合 (切れたリンク) を hotfix ブランチから PR -> マージ -> `v1.0.1` (annotated) と Release | 1h | - | 非同期 | W3 |
-| 11 | 現場の初日に聞くこと + Docker | [first-day-questions.md](first-day-questions.md) の質問を自分の言葉で Issue にコメント。Docker サイドクエスト (`docker compose up` で砂場を表示)。到達チェックの自己評価。PR は作らない | 1h | - | 対面 4 | W4 |
+| 11 | 現場の初日に聞くこと + Docker | [first-day-questions.md](first-day-questions.md) の質問を自分の言葉でゲーム画面のメモに書く。Docker サイドクエスト (`docker compose up` で砂場を表示)。到達チェックの自己評価。PR は作らない | 1h | - | 対面 4 | W4 |
 | 12 | 実タスク編 | 実プロジェクトで同じ流れを 1 往復し、運用手順の初版を書く ([real-task.md](real-task.md))。内容は public に書かない | 3h | - | 非同期 | W4 |
 
 - 想定時間の合計は砂場 11 本で約 14.5h、実タスク編を含めて約 17.5h
@@ -52,18 +53,18 @@ Issue の番号は演習番号と一致しない (再利用で増える) ので�
 
 ### 実タスク編 (W4)
 
-受講者の実プロジェクトで同じ流れを 1 往復する。砂場リポジトリには Issue だけ置く (`quest-12`)。
-内容は [real-task.md](real-task.md): (1) Issue を 1 つ選び完了条件を 1 行で書く、(2) 同じブランチ命名と 5 項目 PR、(3) レビューを受けて 1 往復、(4) 自分が抜けた後に別の人が同じ作業をできる「運用手順の初版」を書く。
+受講者の実プロジェクトで同じ流れを 1 往復する。砂場側にはクエストの文 (`quest-12`) だけがある。
+内容は [real-task.md](real-task.md): (1) タスクを 1 つ選び完了条件を 1 行で書く、(2) 同じブランチ命名と 5 項目 PR、(3) レビューを受けて 1 往復、(4) 自分が抜けた後に別の人が同じ作業をできる「運用手順の初版」を書く。
 
 ### 演習ファイルの形
 
 `exercises/NN-<slug>.md` 1 ファイルに 2 部を置く。
 
-1. **Issue 本文** (受講者向け): 状況 (架空の同僚からの依頼文)、やること、完了条件 (1 行ずつ)、参考 (`docs/` へのリンク)、詰まったら (何分で誰に聞くか)
-2. **進行役メモ** (進行役向け): 見るところ、差し戻しの台本 (05)、NPC が動かなかったときの手当て、よくある詰まり
+1. **クエスト本文** (受講者向け。`<!-- quest:start -->` 〜 `<!-- quest:end -->`): 状況 (架空の同僚からの依頼文)、やること、完了条件 (`- [ ]` で 1 行ずつ。ゲーム画面で押せるチェックになる)、参考 (`docs/` へのリンク)、詰まったら (何分で誰に聞くか)
+2. **進行役メモ** (進行役向け。`<!-- notes:start -->` 〜 `<!-- notes:end -->`): 見るところ、差し戻しの台本 (05)、NPC が動かなかったときの手当て、よくある詰まり
 
-本文は `{{pr}}` などの用語 placeholder と `<!-- platform:github -->` ... `<!-- /platform -->` のブロックで 1 ソースにし、`scripts/render.sh` が描画する (15 節)。
-`scripts/seed-issues.sh` が Issue 本文の部だけを描画して起票する (label `quest`, `week-N`)。相対リンクは blob URL に書き換える。
+本文は `{{pr}}` などの用語 placeholder (`web/terms/<platform>.json`) と `<!-- platform:github -->` ... `<!-- /platform -->` のブロックで 1 ソースにする (15 節)。
+ゲーム画面 (`web/lib/quests.mjs`) が raw から取って描画する。相対リンクは blob URL に書き換える。手元で同じ描画を見るには `scripts/render.sh`。
 
 ## 4. 砂場アプリ
 
@@ -83,9 +84,9 @@ HTML と CSS だけ。ビルド無し。ブラウザで `index.html` を開け�
 
 ### 衝突を狙える行
 
-Issue が「どの行を何に変えるか」を指示するので、受講者がその行を変える限り衝突が起きる。
+クエストの本文が「どの行を何に変えるか」を指示するので、受講者がその行を変える限り衝突が起きる。
 
-| 演習 | 受講者が変える行 (Issue の指示) | NPC が同じ行に入れる変更 (conflict.patch) |
+| 演習 | 受講者が変える行 (クエストの指示) | NPC が同じ行に入れる変更 (conflict.patch) |
 |---|---|---|
 | 06 | 開館時間の表「土曜」行: `10:00〜17:00` -> `10:00〜18:00` | `土曜 10:00〜16:00 (冬季)` |
 | 07 | おすすめ本の 1 冊目: 題名 A -> B | 題名 A -> C |
@@ -187,7 +188,7 @@ npc/
 | ファイル | 文面の骨子 |
 |---|---|
 | 01-desc.md | `[Q] DESC-01` PR 本文の「変更内容」に書いたファイルと Files changed の一覧が一致しているか確認してください。一致していれば resolve、違えば本文を直して返信を |
-| 02-scope.md | `[SHOULD] SCOPE-01` タイトルは `quest-04:` で始め、1 つの Issue の変更だけが入っているか確認してください |
+| 02-scope.md | `[SHOULD] SCOPE-01` タイトルは `quest-04:` で始め、1 つのクエストの変更だけが入っているか確認してください |
 | 03-check.md | `[NITS] DESC-05` 「確認方法」に、何を開いて何を見てどうだったかを 1 行添えると再現しやすくなります |
 
 受講者が既に正しくできていても成立する文面にしてある (確認依頼型)。NPC はこの後の返信には反応しない。進行役が approve する前に、受講者の返し方 (直した / 直さない理由 / 質問) と resolve を見る。
@@ -243,7 +244,7 @@ docs/
   reset.md                      リセット手順 (進行役向け)
   progress-template.md          記録の書式 (個人情報なし)
 exercises/
-  01-github-account.md          Issue 本文 + 進行役メモ。placeholder とプラットフォーム別ブロックを含む
+  01-github-account.md          クエスト本文 + 進行役メモ。placeholder とプラットフォーム別ブロックを含む
   02-wsl2-and-clone.md
   03-first-commit-and-push.md
   04-branch-and-pr.md
@@ -258,18 +259,24 @@ exercises/
 site/                           砂場 (4 節)
 compose.yaml, Dockerfile        サイドクエスト
 npc/                            6.3 節
+web/                            ゲーム画面 (GitHub Pages。16 節)
+  index.html, style.css, app.mjs
+  lib/github.mjs                GitHub API (認証なし、ETag) と raw の取得
+  lib/progress.mjs              進捗の判定 (純粋関数)
+  lib/gitgraph.mjs              Mermaid gitGraph のテキスト生成 (純粋関数)
+  lib/quests.mjs                演習 markdown の描画規則 (メタ、セクション、platform、用語、リンク)
+  lib/save.mjs                  セーブデータ (localStorage)
+  terms/github.json, gitlab.json   用語 placeholder の値 (render.sh も読む)
 scripts/
   bootstrap.sh                  最初に 1 回: リポジトリ作成 -> App (Manifest フロー) -> install 待ち -> secret -> setup.sh
   lib/app-manifest.mjs          Manifest フローの受け口 (node。ブラウザからの戻りを受けて App の id / pem を得る)
+  lib/app-jwt.mjs               App として API を呼ぶ JWT (install の検知)
   lib/platform.sh               kit.conf の読み書き
-  lib/terms-github.sh           用語 (GitHub)
-  lib/terms-gitlab.sh           用語 (GitLab)
-  render.sh                     演習の描画 (placeholder、platform ブロック、セクション切り出し、リンク)
-  seed-issues.sh                exercises/ から Issue を起票 (gh / glab)
-  setup.sh                      公開前の設定 (リポジトリ設定、ruleset、baseline タグ、招待、起票、ボード)
-  board.sh                      進行ボード (render / update。16 節)
+  render.sh                     演習の描画を手元で確認 (ゲーム画面と同じ規則)
+  setup.sh                      公開前の設定 (リポジトリ設定、ruleset、baseline タグ、招待、Pages)
   reset.sh                      砂場を初期状態へ (11 節)
   playtest.sh                   GitHub なしの自動テストプレイ (演習 03〜10)
+  web-check.mjs                 ゲーム画面のロジックを本物のリポジトリに対して確かめる (node)
   check-forbidden.sh            CI と手元で使う禁止文字列の検査
   npc/make-patch.sh             パッチの生成
   npc/identity.sh               NPC の git 識別情報
@@ -277,8 +284,8 @@ scripts/
 .github/
   workflows/check.yml           CI
   workflows/npc-conflict.yml, npc-review.yml, npc-pr.yml
-  workflows/board.yml           進行ボードの自動更新
-  PULL_REQUEST_TEMPLATE.md      5 項目 + `Closes #<Issue>`
+  workflows/pages.yml           ゲーム画面のデプロイ (web/ が変わったとき)
+  PULL_REQUEST_TEMPLATE.md      `クエスト: quest-NN` + 5 項目
   ruleset-main.json             ruleset の定義 (scripts/setup.sh が API で適用)
 ```
 
@@ -287,11 +294,12 @@ scripts/
 手順は [setup.md](setup.md) に書く。ここでは値だけ決める。
 最初の公開は `scripts/bootstrap.sh` が一括で行う: リポジトリ作成と push -> GitHub App の作成 (**Manifest フロー**。設定済みの manifest をブラウザに送り、人は Create GitHub App を 1 回押す。戻ってきた code を `POST /app-manifests/{code}/conversions` で交換して id と秘密鍵を得る) -> install (人がリポジトリを選ぶ 1 回) を待つ -> secret 登録 -> `scripts/setup.sh`。
 App は進行役のアカウントに 1 つで、`~/.config/git-workflow-training/` に保存して次のリポジトリでも使う。手作業はクリック 2 回。
-`scripts/setup.sh --platform github --app-id <App ID> --trainee <login>` 単体では、リポジトリ設定、ruleset、baseline タグ、招待と variable、ラベルと Issue、進行ボードを行う。
+`scripts/setup.sh --platform github --app-id <App ID> --trainee <login>` 単体では、リポジトリ設定、ruleset、baseline タグ、招待と variable、GitHub Pages の有効化を行う。
 
 - **名前**: `git-workflow-training` (確定。内容を表し、組織名を含まない)
 - **README 冒頭の 3 点**: 研修用である / 受講者のアカウント名と commit が公開される (参加は本人の了承のうえで) / 組織固有の情報・秘密は入れない
-- **Settings > General**: Issues ON、Wiki と Projects OFF。Pull Requests: Squash (既定、メッセージは PR タイトル + 本文)、Rebase 許可、Merge commit 許可 (4 つの動詞を見せるため)。Automatically delete head branches ON
+- **Settings > General**: Issues / Wiki / Projects OFF (Issue は使わない)。Pull Requests: Squash (既定、メッセージは PR タイトル + 本文)、Rebase 許可、Merge commit 許可 (4 つの動詞を見せるため)。Automatically delete head branches ON
+- **Pages**: Source = GitHub Actions (`pages.yml` が `web/` を配る)。URL は `https://<owner>.github.io/<repo>/`
 - **Actions**: Workflow permissions は read-only (GITHUB_TOKEN は使わない)
 - **Ruleset `main`** (default branch を対象):
   - Restrict deletions、Block force pushes
@@ -301,7 +309,7 @@ App は進行役のアカウントに 1 つで、`~/.config/git-workflow-trainin
 - **Collaborators**: 受講者 (Write)
 - **Variables**: `TRAINEE_LOGIN`。**Secrets**: `NPC_APP_ID`、`NPC_APP_PRIVATE_KEY` (案 B なら `NPC_TOKEN`)
 - **Tag `baseline`**: 砂場の初期状態を指す。`site/` を意図して変えたら動かす
-- **Issue 起票**: `scripts/seed-issues.sh`。label `quest`、`week-1`〜`week-4`、`npc`
+- **ラベル**: `npc` (NPC の PR に付く。`scripts/npc/pr.sh` が無ければ作る)
 - 公開の直前に `scripts/check-forbidden.sh --all` と 12 節の線引きを目で確認する
 
 ## 9. 受講者の GitHub アカウント (演習 01 の一般形)
@@ -330,7 +338,7 @@ App は進行役のアカウントに 1 つで、`~/.config/git-workflow-trainin
 3. リモートの `quest/*` と `npc/*` ブランチを削除
 4. タグ `v*` と Release を削除 (`baseline` は残す)
 5. `git checkout baseline -- site/` して「砂場を初期状態に戻す」コミットを作り、PR 経由でマージ (`gh pr merge --squash --admin`。admin の bypass は PR のみ)
-6. 前の受講者の Issue を close し、`scripts/seed-issues.sh` で起票し直す
+6. ゲーム画面の進捗はブラウザの保存なので、新しい受講者は「はじめから」を押す (リポジトリ側では何もしない)
 7. `TRAINEE_LOGIN` を更新し、新しい受講者を collaborator に招待。前の受講者を外す
 8. `npc/quests/*/conflict.patch` と `pr.patch` が baseline に当たることを `git apply --check` で確認
 
@@ -358,6 +366,7 @@ App は進行役のアカウントに 1 つで、`~/.config/git-workflow-trainin
 2. 旧演習 11 (squash -> rebase -> ff) を 07 に吸収し、砂場は 11 本 + 実タスク編 (12)
 3. リポジトリ名は `git-workflow-training`、ライセンスは MIT
 4. プラットフォームはフラグで選べる構造にする (15 節)。初回の実施は GitHub
+5. 進め方の UI は Web のゲーム画面 (見る専用、GitHub Pages)。Issue は使わない (同日、テストプレイに入る直前に認識の食い違いが分かって変更。16 節)
 
 ## 14. 実装の状態
 
@@ -367,13 +376,13 @@ App は進行役のアカウントに 1 つで、`~/.config/git-workflow-trainin
 |---|---|
 | 砂場 `site/`、CI (`check.yml`、`.htmlvalidate.json`、`check-forbidden.sh`)、compose / Dockerfile | 作成済み。html-validate と check-forbidden を手元で通した |
 | `docs/` 一式 | 作成済み |
-| `exercises/` 12 本 | 作成済み。`scripts/seed-issues.sh --dry-run` で描画を確認 |
+| `exercises/` 12 本 | 作成済み。Issue 依存を外してゲーム画面向けに書き換え済み。描画は `scripts/web-check.mjs` と `scripts/render.sh` で確認 |
 | NPC: パッチ 3 本、レビューコメント 3 本、答え、workflow 3 本、scripts/npc | 作成済み。パッチは `git apply --check` を通した。workflow は公開後の煙テスト (setup.md 6 節) で動作を見る |
-| `scripts/` (render、seed-issues、setup、reset) | 作成済み。shellcheck を通した。GitHub API を叩く部分は公開時に初めて動く |
+| `scripts/` (render、setup、reset) | 作成済み。shellcheck を通した。setup / reset は公開で実際に使った (Issue 関連は撤去済み) |
 | `scripts/playtest.sh` (GitHub なしの自動テストプレイ) | 作成済み。模擬 origin に pre-receive hook で main を保護し、受講者役が演習 03〜10 の Issue のコマンドを順に打つ。NPC は本物の conflict.sh。通し結果: 衝突 2 回、rebase 解消、squash、force-with-lease、Rebase and merge の SHA 変化、revert、hotfix とタグ、NPC パッチの最終状態での適用、すべて OK (2026-11-06) |
-| `scripts/bootstrap.sh` + `scripts/lib/app-manifest.mjs` (公開の一括化) | 作成済み。shellcheck と `node --check` を通した。Manifest フローと install 待ちは公開時に初めて動く |
-| 進行ボード (`scripts/board.sh`、`board.yml`。16 節) | 作成済み。描画は手元の模擬リポジトリで確認。Issue の作成と pin は公開時に初めて動く |
-| `baseline` タグ | 未。`scripts/setup.sh` が最初の push 後に打つ |
+| `scripts/bootstrap.sh` + `scripts/lib/app-manifest.mjs` + `app-jwt.mjs` (公開の一括化) | 公開で実際に使った。固定ポート、manifest の hook_attributes、install 検知の API を直して通った |
+| ゲーム画面 (`web/`、`pages.yml`。16 節) | 作成済み。ロジックは `scripts/web-check.mjs` で本物のリポジトリに対して確認。Pages の配信はマージ後に初めて動く |
+| 公開 | 2026-11-06 に public で公開済み。App install、secret、ruleset、baseline タグ、煙テスト (check / npc-review / npc-conflict) まで確認 |
 | GitLab 版の自動化 | 未実装 (15 節) |
 
 ## 15. プラットフォーム切替と GitLab 版
@@ -381,7 +390,7 @@ App は進行役のアカウントに 1 つで、`~/.config/git-workflow-trainin
 ### 切り替えの仕組み (実装済み)
 
 - `kit.conf` の `PLATFORM=github|gitlab`。`scripts/setup.sh --platform` が書き、`scripts/lib/platform.sh` が読む (環境変数 `KIT_PLATFORM` が優先)
-- 演習 (`exercises/*.md`) は 1 ソース。用語は `{{pr}}` などの placeholder (`scripts/lib/terms-<platform>.sh`)、プラットフォーム固有の手順は `<!-- platform:github -->` ... `<!-- /platform -->` のブロック。`scripts/render.sh` が描画し、`scripts/seed-issues.sh` が起票する (`gh` / `glab`)
+- 演習 (`exercises/*.md`) は 1 ソース。用語は `{{pr}}` などの placeholder (`web/terms/<platform>.json`)、プラットフォーム固有の手順は `<!-- platform:github -->` ... `<!-- /platform -->` のブロック。ゲーム画面 (`web/lib/quests.mjs`) が描画し、`scripts/render.sh` が手元で同じ描画を出す。プラットフォームは `kit.conf` から読む
 - `docs/` は描画しない。両プラットフォームを併記し、操作の 1 枚だけ `docs/platform/github.md` と `docs/platform/gitlab.md` に分ける
 - 自動化 (CI、NPC) はプラットフォーム固有。GitHub 版は `.github/`、GitLab 版は `.gitlab-ci.yml` に置く想定で、同じリポジトリに共存できる (push 先が GitHub なら Actions だけが動く)
 
@@ -398,18 +407,23 @@ Free の self-managed を想定した対応表。
 | (a) push `quest/**` -> conflict | `rules: - if: $CI_COMMIT_BRANCH =~ /^quest\//` のジョブ。`scripts/npc/conflict.sh` の `gh api` を `glab api` に、push 先 URL に token を埋める |
 | (b) PR opened -> review | `rules: - if: $CI_PIPELINE_SOURCE == "merge_request_event"` のジョブで discussions API (`POST /projects/:id/merge_requests/:iid/discussions`)。ファイル単位のスレッドには position が要るので、まず MR 全体の discussion で代替 |
 | (c) workflow_dispatch -> NPC PR | 手動パイプライン (Run pipeline、変数 `NPC_QUEST=08`) と `rules: - if: $NPC_QUEST`。`glab mr create --reviewer` |
-| `gh` CLI | `glab` CLI (`scripts/seed-issues.sh` は対応済み) |
+| `gh` CLI | `glab` CLI |
+| ゲーム画面の GitHub API 呼び出し | GitLab REST API に差し替え (`web/lib/github.mjs` を `gitlab.mjs` に。branches / tags / merge_requests / compare / approvals) |
 | Revert ボタン、Tag、Release | 同等の機能あり ([platform/gitlab.md](platform/gitlab.md)) |
 
-`scripts/setup.sh --platform gitlab` は kit.conf と Issue の起票だけを行い、残りは手順を表示する。`scripts/reset.sh` は GitLab では止まる。
+`scripts/setup.sh --platform gitlab` は kit.conf を書き、残りは手順を表示する。`scripts/reset.sh` は GitLab では止まる。
 
-## 16. 進行ボード (2026-11-06 追加)
+## 16. ゲーム画面 (web/) (2026-11-06 追加)
 
-受講者が「今どこにいるか」と「main と枝がどういう形か」を常に見られるようにする。Web UI は作らない (前提)。GitHub の **pin した Issue** を Actions が自動更新する。
+受講者が「今どこにいるか」「次に何をするか」「main と枝がどういう形か」を 1 つの画面で見られるようにする。**見る専用**で、操作そのもの (git、PR、レビュー) はターミナルと GitHub で行う。これは「現場で使う本物の道具」から離れないための線引き。
 
-- **何を見せるか**: 演習の表 (quest ラベルの Issue の open / closed。最小番号の open が「いまここ」)、開いている PR とレビューの状態、main と未マージの枝の木 (Mermaid の `gitGraph`。GitHub が Issue 本文で描画する)、同じ木をターミナルで見た形 (`git log --graph`、折りたたみ)、読み方 3 行
-- **いつ更新するか**: `.github/workflows/board.yml`。push (枝とタグ)、ブランチの作成と削除、PR の open / close / reopen、Issue の open / close / reopen、手動。`concurrency` で最新だけ残す。App のトークンで Issue を編集する (Issues: write)
-- **どう描くか** (`scripts/board.sh render`): main の直近 12 コミットを本線に並べ、各枝は merge-base の位置で `branch` / `checkout` して枝のコミットを最大 8 個、`checkout main` で戻る。merge-base が窓より古い枝は窓の先頭に付ける。タグは `tag:`、main の先端は `type: HIGHLIGHT`。枝名は `/` などを `-` に置き換える (Mermaid の制約)。コミットメッセージは 24 文字で切り、`"` と `\` と `` ` `` を外す
-- **手元でも同じものが見える**: `scripts/board.sh render`。gh でリポジトリに届かないときは、Issue と PR の部分を省いて木だけ描く
-- **NPC の 3 イベントとは別** の仕組み。前提「NPC の自動化は 3 イベントまで」には数えない (同僚の振る舞いではなく、進行役が見せる掲示板)
-- **補助**: VS Code の Git Graph 拡張と `git tree` エイリアス (`log --graph --oneline --decorate --all`) を [wsl2-setup.md](wsl2-setup.md) で任意として案内する。ボードは「GitHub 上の全体」、Git Graph は「手元の今」を見るのに使う
+- **置き場**: `web/` の静的サイト。GitHub Pages (`pages.yml`、`web/` が変わったときにデプロイ)。バックエンド無し。URL は `https://<owner>.github.io/<repo>/`
+- **データ**: GitHub REST API を認証なしで読む (public リポジトリ。60 回/時)。ETag で条件付き取得にし、304 は回数を消費しない。1 回の更新で branches / tags / pulls / commits / compare (枝ごと) / reviews (NPC の PR ごと) / contents を呼ぶ (8〜12 回)。2 分ごとに自動更新、手動更新ボタンあり。演習の本文と `kit.conf` は raw.githubusercontent.com から取る
+- **進捗の判定** (`web/lib/progress.mjs`、純粋関数): `quest/NN-*` の PR がマージ -> NN 済 / `hotfix/*` のマージ + タグ v1.0.0 と v1.0.1 -> 10 済 / NPC の PR に人が Request changes -> 08 済 / 01, 02, 11, 12 は完了条件のチェック (`- [ ]`) を全部付けると済。未完了で `quest/NN-*` の枝か PR があれば「作業中」。最初の未完了が「いまここ」
+- **セーブデータ** (`web/lib/save.mjs`): localStorage に、開始日時、完了条件のチェック、クエストごとのメモ。「はじめから」で消して作り直し、「続きから」で読む。GitHub 側の状態は保存しない (毎回取り直す)。砂場を戻すのは進行役の `scripts/reset.sh`
+- **画面**: 左にクエスト一覧 (済 / 作業中 / いまここ)、NPC の動き (main への commit、PR、レビュー)、開いている PR。右に選んだクエストの本文 (markdown。完了条件は押せるチェック)、進行役メモ (折りたたみ)、メモ欄、前後のクエストへ。下にブランチの木 (Mermaid の `gitGraph` をブラウザで描く。規則: main の直近 12 コミット、枝は merge-base から、タグ、先端を強調)
+- **描画の規則** (`web/lib/quests.mjs`): メタ (`<!-- kit -->`)、セクション (`quest` / `notes`)、platform ブロック、`{{用語}}` (`web/terms/<platform>.json`)、相対リンクを blob URL に。`scripts/render.sh` も同じ規則で、手元での確認用
+- **依存**: marked と mermaid を CDN (jsdelivr) の ES module で読む。ビルド無し。markdown は自分のリポジトリの内容なので sanitize しない (進行役がマージしたものだけが main に入る)
+- **検証**: `scripts/web-check.mjs` が同じ lib を node で動かし、本物のリポジトリに対して判定と gitGraph のテキストを出す
+- **NPC の 3 イベントとは別** の仕組み。前提「NPC の自動化は 3 イベントまで」には数えない
+- **補助**: VS Code の Git Graph 拡張と `git tree` エイリアスを [wsl2-setup.md](wsl2-setup.md) で任意として案内する。ゲーム画面は「GitHub 上の全体」、Git Graph は「手元の今」
