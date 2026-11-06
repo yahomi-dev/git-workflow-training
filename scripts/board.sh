@@ -180,11 +180,15 @@ render() {
   echo "- 自分のブランチが main より後ろにいるとき (本線が進んでいる) は、取り込む前に rebase か merge が要る (演習 06、07)"
 }
 
+# EXIT トラップは関数の外で走るので、一時ファイル名はグローバルに持つ
+board_body=""
+trap 'rm -f "${board_body:-}"' EXIT
+
 update() {
   [ "$have_gh" -eq 1 ] || { echo "board: gh でリポジトリに届きません" >&2; exit 1; }
   local body num url
-  body="$(mktemp)"
-  trap 'rm -f "$body"' EXIT
+  board_body="$(mktemp)"
+  body="$board_body"
   render > "$body"
   num="$(gh issue list --label board --state open --limit 1 --json number --jq '.[0].number // empty')"
 
