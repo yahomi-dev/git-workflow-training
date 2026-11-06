@@ -1,0 +1,23 @@
+{
+  "platform": "GitHub",
+  "pr": "PR",
+  "pr_long": "Pull Request (PR)",
+  "cli": "gh",
+  "ci": "Actions",
+  "ci_tab": "Checks タブ",
+  "protected": "ruleset (保護された main)",
+  "squash_merge": "Squash and merge",
+  "rebase_merge": "Rebase and merge",
+  "merge_commit": "Create a merge commit",
+  "request_changes": "Request changes",
+  "approve": "Approve",
+  "resolve": "Resolve conversation",
+  "rerequest": "Re-request review (レビュアー名の横の矢印)",
+  "pr_create": "gh pr create --web (ブラウザが開き、テンプレートが本文に入る)",
+  "pr_view": "gh pr view --web",
+  "pr_checkout": "gh pr checkout",
+  "revert_button": "マージ済み PR のページ下部の Revert ボタン",
+  "release": "Release (Releases > Draft a new release、または gh release create)",
+  "platform_doc": "docs/platform/github.md",
+  "push_rejected": "GH013 (ruleset による拒否)"
+}

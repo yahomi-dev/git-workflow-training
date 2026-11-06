@@ -2,19 +2,19 @@
 # 公開前の整え方のうち、自動化できる部分を行う。手順書は docs/setup.md。
 #
 # 使い方:
-#   scripts/setup.sh --platform github [--app-id <NPC の GitHub App ID>] [--trainee <受講者のログイン名>] [--skip-issues]
-#   scripts/setup.sh --platform gitlab [--skip-issues]
+#   scripts/setup.sh --platform github [--app-id <NPC の GitHub App ID>] [--trainee <受講者のログイン名>] [--skip-pages]
+#   scripts/setup.sh --platform gitlab
 #
 # GitHub で行うこと:
 #   1. kit.conf に PLATFORM を書く
-#   2. リポジトリ設定 (Squash 既定、Rebase と Merge commit も許可、head ブランチ自動削除、Wiki / Projects オフ)
+#   2. リポジトリ設定 (Squash 既定、Rebase と Merge commit も許可、head ブランチ自動削除、Wiki / Projects / Issues オフ)
 #   3. ruleset `main` (.github/ruleset-main.json。--app-id があれば NPC の App を bypass に入れる)
 #   4. baseline タグ (無ければ今の HEAD に打って push)
 #   5. 受講者を collaborator (Write) に招待し、variable TRAINEE_LOGIN を設定 (--trainee があれば)
-#   6. ラベルと Issue の起票 (scripts/seed-issues.sh)
+#   6. GitHub Pages (ゲーム画面 web/) を有効にし、URL を表示する
 #   secret (NPC_APP_ID、NPC_APP_PRIVATE_KEY) は秘密なので登録せず、コマンドを表示するだけ
 #
-# GitLab では kit.conf と Issue の起票だけを行い、残りは手順を表示する (自動化は未実装)。
+# GitLab では kit.conf を書き、残りは手順を表示する (自動化は未実装)。
 # 前提: `gh auth login` 済み、remote origin がリポジトリを指し、main を push 済み。
 set -euo pipefail
 
@@ -32,7 +32,7 @@ while [ $# -gt 0 ]; do
     --platform) platform="$2"; shift 2 ;;
     --app-id) app_id="$2"; shift 2 ;;
     --trainee) trainee="$2"; shift 2 ;;
-    --skip-issues) skip_issues=1; shift ;;
+    --skip-pages) skip_issues=1; shift ;;
     *) echo "setup: 不明な引数 $1" >&2; exit 1 ;;
   esac
 done
@@ -51,15 +51,8 @@ echo "PLATFORM=${platform}"
 
 if [ "$platform" = "gitlab" ]; then
   echo
-  echo "GitLab 版の自動化 (CI の check、NPC、protected branch の設定) は未実装です。"
+  echo "GitLab 版の自動化 (CI の check、NPC、protected branch の設定、ゲーム画面の API) は未実装です。"
   echo "docs/platform/gitlab.md と docs/design.md 15 節を見て、protected branch と merge method を手で設定してください。"
-
-  if [ "$skip_issues" -eq 0 ]; then
-    echo
-    echo "== Issue の起票 (glab)"
-    "${here}/seed-issues.sh" --platform gitlab
-  fi
-
   exit 0
 fi
 
@@ -77,8 +70,8 @@ gh api --method PATCH "repos/${nwo}" \
   -f squash_merge_commit_message=PR_BODY \
   -F has_wiki=false \
   -F has_projects=false \
-  -F has_issues=true > /dev/null
-echo "Squash 既定 / Rebase・Merge commit 許可 / head ブランチ自動削除 / Wiki・Projects オフ"
+  -F has_issues=false > /dev/null
+echo "Squash 既定 / Rebase・Merge commit 許可 / head ブランチ自動削除 / Wiki・Projects・Issues オフ"
 
 echo
 echo "== 3. ruleset main"
@@ -125,13 +118,19 @@ fi
 
 if [ "$skip_issues" -eq 0 ]; then
   echo
-  echo "== 6. ラベルと Issue"
-  "${here}/seed-issues.sh" --platform github
-fi
+  echo "== 6. GitHub Pages (ゲーム画面)"
 
-echo
-echo "== 7. 進行ボード"
-"${here}/board.sh" update
+  if gh api "repos/${nwo}/pages" > /dev/null 2>&1; then
+    gh api --method PUT "repos/${nwo}/pages" -f build_type=workflow > /dev/null
+    echo "既に有効。build_type=workflow に揃えた"
+  else
+    gh api --method POST "repos/${nwo}/pages" -f build_type=workflow > /dev/null
+    echo "有効にした (Actions でデプロイ)"
+  fi
+
+  gh workflow run pages.yml > /dev/null 2>&1 && echo "pages workflow を起動した" || echo "pages.yml が main に無いので、マージ後の push で自動デプロイされる"
+  echo "ゲーム画面: $(gh api "repos/${nwo}/pages" --jq .html_url)"
+fi
 
 echo
 echo "== 残り (手で行う。scripts/bootstrap.sh を使った場合は済んでいる)"

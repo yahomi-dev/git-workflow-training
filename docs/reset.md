@@ -14,7 +14,7 @@ scripts/reset.sh --yes --trainee <次の受講者のログイン名>
 1. 開いている PR を close し、`quest/*` と `npc/*` のリモートブランチを削除
 2. `v*` のタグと Release を削除 (`baseline` は残す)
 3. `site/` を `baseline` の状態に戻すコミットを PR 経由で main に入れる (admin の bypass は PR 経由のみ)
-4. `quest` ラベルの Issue を close し、起票し直す。進行ボードも更新する
+4. ゲーム画面の進捗はブラウザの保存なので、次の受講者が「はじめから」を押す (リポジトリ側では何もしない)
 5. `TRAINEE_LOGIN` を更新し、次の受講者を collaborator に招待
 6. NPC のパッチが baseline に当たることを `git apply --check` で確かめる
 
@@ -36,4 +36,4 @@ git tag -f -a baseline -m "砂場 (site/) の初期状態" && git push -f origin
 
 ## GitLab の場合
 
-`scripts/reset.sh` は GitLab 未対応。上の 1〜6 を `glab` と UI で行う。Issue の起票だけは `scripts/seed-issues.sh --platform gitlab` が使える。
+`scripts/reset.sh` は GitLab 未対応。上の 1〜6 を `glab` と UI で行う。

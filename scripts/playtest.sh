@@ -2,7 +2,7 @@
 # GitHub なしで演習 03〜10 の手順を通す (保守用の自動テストプレイ)。
 #
 # 作業ディレクトリに模擬の origin (bare)、GitHub 役、NPC 役、受講者役の clone を作り、
-# 各演習の Issue に書いてあるコマンドを受講者役が順に打つ。NPC は本物の scripts/npc/conflict.sh を使う。
+# 各演習のクエスト本文に書いてあるコマンドを受講者役が順に打つ。NPC は本物の scripts/npc/conflict.sh を使う。
 # PR のマージは GitHub 役が Squash / Rebase and merge と同じ結果になるように行う。
 # main への直接 push は pre-receive hook が拒否する (ruleset の模擬)。
 #
@@ -215,10 +215,10 @@ sed -i 's|^\( *\)</table>|&\n\1<p class="hours-note">入館は閉館の少し前
 git add "$index"
 git commit --quiet -m "開館時間の表に入館の注記を追加する"
 git push --quiet -u origin quest/05-entry-note
-# 差し戻し (REQ-01): 文言を Issue の追記に合わせる
+# 差し戻し (REQ-01): 文言を PR コメントで伝えられた仕様に合わせる
 sed -i 's|閉館の少し前まで|閉館の 15 分前まで|' "$index"
 git add "$index"
-git commit --quiet -m "注記の文言を Issue の追記に合わせる"
+git commit --quiet -m "注記の文言を連絡のあった仕様に合わせる"
 git push --quiet
 merge_squash quest/05-entry-note "quest-05: 開館時間の表に入館の注記を追加する"
 trainee_cleanup quest/05-entry-note

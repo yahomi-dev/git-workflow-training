@@ -5,7 +5,7 @@
 #   1. 開いている PR を close し、quest/* と npc/* のリモートブランチを削除
 #   2. v* のタグと Release を削除 (baseline は残す)
 #   3. site/ を baseline の状態に戻すコミットを PR 経由で main に入れる (履歴は書き換えない)
-#   4. quest ラベルの Issue を close し、起票し直す
+#   4. (ゲーム画面の進捗はブラウザの保存なので、受講者が「はじめから」で消す。ここでは何もしない)
 #   5. --trainee があれば TRAINEE_LOGIN を更新し、collaborator に招待する (前の受講者を外すのは手で)
 #   6. NPC のパッチが baseline に当たるか確かめる
 # 前提: 進行役 (リポジトリの admin) が `gh auth login` 済み。作業ツリーが clean。
@@ -93,7 +93,7 @@ else
 
 次の受講者向けに site/ を baseline タグの状態へ戻す。履歴は書き換えない。"
   git push --set-upstream origin "$branch" > /dev/null
-  gh pr create --fill --label quest > /dev/null 2>&1 || gh pr create --fill > /dev/null
+  gh pr create --fill > /dev/null
   gh pr merge "$branch" --squash --admin --delete-branch > /dev/null
   git switch main > /dev/null
   git pull --ff-only > /dev/null
@@ -101,13 +101,8 @@ else
 fi
 
 echo
-echo "== 4. Issue"
-for n in $(gh issue list --label quest --state open --json number --jq '.[].number'); do
-  gh issue close "$n" --comment "次の受講者向けにリセットするため close します" > /dev/null
-  echo "closed issue #${n}"
-done
-"${here}/seed-issues.sh" --platform github
-"${here}/board.sh" update
+echo "== 4. ゲーム画面の進捗"
+echo "ブラウザの保存なので、次の受講者はゲーム画面の「はじめから」を押す (前の受講者の PC には残る)"
 
 if [ -n "$trainee" ]; then
   echo

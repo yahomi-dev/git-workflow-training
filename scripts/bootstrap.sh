@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# 進行役が最初に 1 回叩く。リポジトリの作成と push -> NPC の GitHub App (Manifest フロー) -> secret -> 設定と起票 -> 進行ボード。
+# 進行役が最初に 1 回叩く。リポジトリの作成と push -> NPC の GitHub App (Manifest フロー) -> secret -> 設定 (ruleset、baseline、Pages)。
 # 残る手作業はブラウザで 2 クリック (App の作成確認と、このリポジトリへの install)。
 #
 # 使い方: scripts/bootstrap.sh [--repo <owner/name>] [--app-name <App 名>] [--trainee <受講者>] [--new-app] [--port <番号>]
@@ -209,5 +209,6 @@ fi
 echo
 echo "== 完了"
 echo "リポジトリ: https://github.com/${nwo}"
-echo "次: docs/setup.md の煙テスト (quest/04-smoke ブランチで PR を 1 本開き、check と npc-review が動くことを見る)"
+echo "ゲーム画面: https://${nwo%%/*}.github.io/${nwo##*/}/ (初回は Pages のデプロイが終わるまで数分かかる)"
+echo "次: docs/setup.md の煙テスト (quest/04-smoke ブランチで PR を 1 本開き、check と npc-review が動き、ゲーム画面に枝が出ることを見る)"
 [ -n "$trainee" ] || echo "受講者が決まったら: gh variable set TRAINEE_LOGIN --body <ログイン名> と、Settings > Collaborators で招待 (または scripts/setup.sh --trainee)"

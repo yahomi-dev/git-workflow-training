@@ -10,7 +10,7 @@
 2. メールの非公開: Settings > Emails で "Keep my email addresses private" と "Block command line pushes that expose my email" の両方にチェック
    - 確かめ方: チェックの下に `<ID>+<ログイン名>@users.noreply.github.com` が表示される。これが git の `user.email` に入れる noreply アドレス ([wsl2-setup.md](../wsl2-setup.md) 5 節)
 3. 招待の受諾: 進行役からの collaborator 招待を、メールまたは `https://github.com/<owner>/<repo>/invitations` から Accept
-   - 確かめ方: リポジトリの Issue を開くと、右側の Assignees に自分を選べる
+   - 確かめ方: 招待メールの Accept invitation を押した後、リポジトリのページを開くと Settings 以外のタブが見える。push できるかは演習 03 で確かめる
 
 ## PR を作る (演習 03 から)
 
@@ -25,8 +25,8 @@
 
 確かめ方: `gh pr status` の `Current branch` に `#<番号>` 付きで PR が出る。
 
-テンプレート (`.github/PULL_REQUEST_TEMPLATE.md`) の 5 項目 (意図 / 変更内容 / 影響範囲 / 確認方法 / 相談したいこと) と `Closes #<Issue 番号>` を埋める。
-`Closes` を書くと、マージ時に Issue が自動で閉じる。
+テンプレート (`.github/PULL_REQUEST_TEMPLATE.md`) の 5 項目 (意図 / 変更内容 / 影響範囲 / 確認方法 / 相談したいこと) と、先頭行の `クエスト: quest-NN` を埋める。
+現場では本文に `Closes #NN` と書くとマージ時に Issue が閉じる (この研修では Issue を使わないので書かない)。
 
 ## レビューを受ける / する (演習 04、05、08)
 
@@ -99,5 +99,5 @@ main は ruleset で守られている。直接 push するとこう拒否され
 | `gh pr view --web` | 今のブランチの PR をブラウザで開く |
 | `gh pr checkout <番号>` | 他人の PR のブランチをローカルに持ってくる (演習 08 で NPC の PR を見るとき) |
 | `gh pr checks` | 今の PR の CI の結果 |
-| `gh issue list` | 開いている Issue の一覧 (`--label quest` で演習だけ) |
+| `gh issue list` | 開いている Issue の一覧 (現場で Issue を使うとき) |
 | `gh repo view --web` | リポジトリをブラウザで開く |

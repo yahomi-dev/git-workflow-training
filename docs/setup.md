@@ -9,7 +9,7 @@ GitLab で使う場合は 6 節へ。
 scripts/playtest.sh                     # 演習 03〜10 を GitHub なしで通す (数十秒)
 scripts/check-forbidden.sh --all        # 秘密らしき文字列が無いこと
 npx --yes html-validate@9 "site/**/*.html"
-scripts/seed-issues.sh --dry-run        # Issue 本文の描画が通ること
+node scripts/web-check.mjs <owner>/<repo>  # ゲーム画面の描画と判定が通ること (push 後。未置換の {{...}} も出る)
 ```
 
 `CLAUDE.local.md` と `.claude-session-state.md` が `git status` に出ないこと (gitignore 済み) を見る。
@@ -28,9 +28,9 @@ scripts/bootstrap.sh                          # 受講者が決まっていれ�
 2. NPC の **GitHub App を Manifest フローで作る**。ブラウザが開くので **Create GitHub App を押す** (クリック 1 回目)。App の ID と秘密鍵はスクリプトが受け取る
 3. App をこのリポジトリに install する。ブラウザが開くので **Only select repositories でこのリポジトリを選び、Install を押す** (クリック 2 回目)。install されるまでスクリプトが待つ
 4. secret `NPC_APP_ID` と `NPC_APP_PRIVATE_KEY` を登録する
-5. `scripts/setup.sh` を呼ぶ (リポジトリ設定、ruleset `main`、`baseline` タグ、受講者の招待と `TRAINEE_LOGIN`、ラベルと Issue、進行ボード)
+5. `scripts/setup.sh` を呼ぶ (リポジトリ設定、ruleset `main`、`baseline` タグ、受講者の招待と `TRAINEE_LOGIN`、GitHub Pages の有効化)。最後にゲーム画面の URL が出る
 
-手作業はクリック 2 回。所要は 3 分ほど。
+手作業はクリック 2 回。所要は 3 分ほど。ゲーム画面の初回デプロイは、`web/` を含む main への push (または Actions > pages > Run workflow) で動く。
 
 - App は進行役のアカウントに 1 つあればよい。`~/.config/git-workflow-training/npc-app.env` と `npc-app.pem` に保存され、次のリポジトリ (次の受講者を別リポジトリで迎えるとき) では install のクリックと secret の登録だけになる。鍵はリポジトリの外にあるのでコミットに混ざらない
 - App の名前は GitHub 全体で一意。既定は `<自分のログイン名>-hidamari-colleague`。変えるなら `--app-name`
@@ -89,9 +89,9 @@ Settings > Rules > Rulesets。
 
 ## 5. 動作確認 (煙テスト)
 
-1. Issues の一番上に pin された **進行ボード** があり、演習の表と main の木が出ていることを見る
-2. 手元から `git switch -c quest/04-smoke` -> `site/README.md` に 1 行足して push -> PR を開く
-3. Actions で `check` が緑、`npc-review` が動いて NPC のコメントが 3 つ付き、`board` が動いてボードに枝と PR が出ることを見る
+1. ゲーム画面 (`https://<owner>.github.io/<repo>/`) を開き、「はじめから」を押す。クエスト一覧と main の木が出ることを見る
+2. 手元から `git switch -c quest/04-smoke` -> `site/index.html` にコメントを 1 行足して push -> PR を開く
+3. Actions で `check` が緑、`npc-review` が動いて NPC のコメントが 3 つ付くことを見る。ゲーム画面を更新すると、開いている PR と木に枝が出る
 4. PR を close し、ブランチを消す (`quest/04-*` の push は演習 06 / 07 のパッチに触れないので、何度でもやり直せる)
 5. Actions > npc-pr > Run workflow は実際の演習 08 まで動かさない (動かすと NPC のブランチが残る。消せばやり直せる)
 
@@ -101,4 +101,4 @@ Settings > Rules > Rulesets。
 scripts/setup.sh --platform gitlab
 ```
 
-kit.conf と Issue の起票だけを行う。CI (`check`)、NPC の 3 イベント、進行ボード、protected branch の設定は未実装なので、[platform/gitlab.md](platform/gitlab.md) と [design.md](design.md) 15 節を見て手で行う。
+kit.conf を書くだけ。CI (`check`)、NPC の 3 イベント、ゲーム画面の API、protected branch の設定は未実装なので、[platform/gitlab.md](platform/gitlab.md) と [design.md](design.md) 15 節を見て手で行う。
