@@ -108,12 +108,12 @@ else
   result="$(mktemp)"
   trap 'rm -f "$manifest" "$result"' EXIT
 
+  # webhook は使わないので hook_attributes を書かない (書くと url が必須になり、manifest が拒否される)
   jq -n --arg name "$app_name" --arg url "https://github.com/${nwo}" '{
     name: $name,
     url: $url,
     description: "研修キットの同僚役 (NPC)。衝突を起こし、レビューコメントを付け、欠陥入りの PR を出す",
     public: false,
-    hook_attributes: { active: false },
     default_events: [],
     default_permissions: { contents: "write", pull_requests: "write", issues: "write", metadata: "read" }
   }' > "$manifest"
