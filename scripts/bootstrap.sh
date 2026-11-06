@@ -162,10 +162,15 @@ fi
 echo
 echo "== 3. App をこのリポジトリに install"
 installation_has_repo() {
-  local iid
-  iid="$(gh api /user/installations --paginate --jq ".installations[] | select(.app_slug == \"${NPC_APP_SLUG}\") | .id" 2> /dev/null | head -n 1)"
-  [ -n "$iid" ] || return 1
-  gh api "/user/installations/${iid}/repositories" --paginate --jq '.repositories[].full_name' 2> /dev/null | grep -qx "$nwo"
+  # App 自身の JWT で「このリポジトリに install されているか」を聞く (gh のトークンでは installations を一覧できない)
+  local jwt code
+  jwt="$(node "${here}/lib/app-jwt.mjs" --app-id "$NPC_APP_ID" --pem "$app_pem")"
+  code="$(curl -s -o /dev/null -w '%{http_code}' \
+    -H "Authorization: Bearer ${jwt}" \
+    -H "Accept: application/vnd.github+json" \
+    -H "User-Agent: git-workflow-training-bootstrap" \
+    "https://api.github.com/repos/${nwo}/installation")"
+  [ "$code" = "200" ]
 }
 
 if installation_has_repo; then
